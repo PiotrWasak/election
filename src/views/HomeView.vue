@@ -9,12 +9,12 @@ const user = useCurrentUser();
 let predictions = useDocument<PartyForm>(doc(firebaseDb, 'predictions', String(user.value?.email)))
 
 let partyForm = ref({
-  PiS: 0,
-  KO: 0,
-  TD: 0,
-  Lewica: 0,
-  Konfa: 0,
-  BS: 0
+  PiS: null,
+  KO: null,
+  TD: null,
+  Lewica: null,
+  Konfa: null,
+  BS: null
 })
 
 type PartyForm = typeof partyForm;
