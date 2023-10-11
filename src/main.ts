@@ -11,6 +11,10 @@ import { getFirestore } from 'firebase/firestore'
 
 import { VueFire, VueFireAuth } from 'vuefire'
 
+import { pl } from '@formkit/i18n'
+import '@formkit/themes/genesis'
+import { defaultConfig, plugin } from '@formkit/vue'
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyCS6jfWPaS9ULRtbGaVcgWGdi61SYZ5QNA",
@@ -37,5 +41,10 @@ app.use(VueFire, {
       VueFireAuth(),
     ],
   })
+app.use(plugin, defaultConfig({
+  theme: 'genesis',
+  locales: { pl },
+  locale: 'pl'
+}))
 
 app.mount('#app')

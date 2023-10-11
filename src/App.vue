@@ -12,12 +12,13 @@ import HelloWorld from './components/HelloWorld.vue';
 
       <nav>
         <RouterLink to="/">Strona główna</RouterLink>
-        <RouterLink to="/about">O nas</RouterLink>
+        <RouterLink to="/about">Zasady</RouterLink>
       </nav>
     </div>
   </header>
-
-  <RouterView />
+  <div class="px-3">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
