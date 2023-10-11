@@ -36,7 +36,7 @@ async function submit() {
 </script>
 
 <template>
-  <main>
+  <main v-if="user">
     <div v-if="predictions" class="my-3">
       <h3>Twoje typy:</h3>
       <p v-for="(prediction, index) in Object.keys(predictions)" :key="index">{{ prediction }} - {{
@@ -63,6 +63,9 @@ async function submit() {
         currentValue, 0)
       }}%</span>
     </FormKit>
+  </main>
+  <main v-else>
+    Najpierw musisz się zalogować
   </main>
 </template>
 <style scoped>
