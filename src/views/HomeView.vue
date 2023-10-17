@@ -9,12 +9,12 @@ const user = useCurrentUser();
 let predictions = useDocument<PartyForm>(doc(firebaseDb, 'predictions', String(user.value?.email)))
 
 let partyForm = ref({
-  PiS: null,
-  KO: null,
-  TD: null,
-  Lewica: null,
-  Konfa: null,
-  BS: null
+  PiS: undefined,
+  KO: undefined,
+  TD: undefined,
+  Lewica: undefined,
+  Konfa: undefined,
+  BS: undefined
 })
 
 type PartyForm = typeof partyForm;
@@ -33,6 +33,8 @@ watch(() => user.value, () => {
 async function submit() {
   await setDoc(doc(firebaseDb, "predictions", String(user.value?.email)), partyForm.value);
 }
+
+const showForm = false;
 </script>
 
 <template>
@@ -43,7 +45,7 @@ async function submit() {
         predictions[prediction]
       }}%</p>
     </div>
-    <FormKit @submit="submit" type="form">
+    <FormKit v-if="showForm" @submit="submit" type="form">
       <FormKit v-model="partyForm.PiS" validation="required" help="Podaj z dokładnością do 1 miejsca po przecinku(kropce)"
         number step="0.1" placeholder="Np: 37.5" label="Prawo i Sprawiedliwość" type="number" />
       <FormKit v-model="partyForm.KO" validation="required" help="Podaj z dokładnością do 1 miejsca po przecinku(kropce)"
