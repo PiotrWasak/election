@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { firebaseDb } from '@/main';
-import { doc, setDoc } from "firebase/firestore";
-import { ref, watch } from 'vue';
-import { useCurrentUser, useDocument } from 'vuefire';
+import { collection, doc, setDoc } from "firebase/firestore";
+import { computed, ref, watch } from 'vue';
+import { useCollection, useCurrentUser, useDocument } from 'vuefire';
 
 
 const user = useCurrentUser();
 let predictions = useDocument<PartyForm>(doc(firebaseDb, 'predictions', String(user.value?.email)))
+
+const allPredictions = useCollection(collection(firebaseDb, 'predictions'))
+
 
 let partyForm = ref({
   PiS: undefined,
@@ -18,6 +21,17 @@ let partyForm = ref({
 })
 
 type PartyForm = typeof partyForm;
+
+const official: PartyForm = {
+  PiS: 35.38,
+  KO: 30.70,
+  TD: 14.40,
+  Lewica: 8.61,
+  Konfa: 7.16,
+  BS: 1.86
+}
+
+const parties = ['PiS', 'KO', 'TD', 'Lewica', 'Konfa', 'BS']
 
 watch(() => predictions.value, (value) => {
   partyForm.value = {
@@ -35,6 +49,21 @@ async function submit() {
 }
 
 const showForm = false;
+
+const yourResult = computed(() => {
+  if (!predictions.value) return;
+  let pointsArray: number[] = [];
+  parties.forEach(party => {
+    let points = 100;
+    const difference = predictions.value[party] - official[party];
+    const differenceRounded = difference.toFixed(1);
+    points -= Math.abs(differenceRounded) * 10;
+    pointsArray.push(points)
+  })
+  return pointsArray
+});
+
+const resultSum = computed(() => yourResult.value?.reduce((accumulator, currentValue) => accumulator + currentValue, 0))
 </script>
 
 <template>
@@ -44,6 +73,14 @@ const showForm = false;
       <p v-for="(prediction, index) in Object.keys(predictions)" :key="index">{{ prediction }} - {{
         predictions[prediction]
       }}%</p>
+      <h3 class="mt-5">Oficjalne wyniki:</h3>
+      <p v-for="(element, index) in Object.keys(official)" :key="index">{{ element }} - {{
+        official[element]
+      }}%</p>
+      <h3 class="mt-5">Twoje punkty:</h3>
+      <span v-for="(element, index) in yourResult" :key="index">{{ element }}, </span>
+      <h3 class="mt-5">Suma</h3>
+      <p>{{ resultSum }}</p>
     </div>
     <FormKit v-if="showForm" @submit="submit" type="form">
       <FormKit v-model="partyForm.PiS" validation="required" help="Podaj z dokładnością do 1 miejsca po przecinku(kropce)"
