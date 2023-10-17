@@ -52,18 +52,21 @@ const showForm = false;
 
 const yourResult = computed(() => {
   if (!predictions.value) return;
-  let pointsArray: number[] = [];
+  let pointsArray = [];
   parties.forEach(party => {
     let points = 100;
     const difference = predictions.value[party] - official[party];
     const differenceRounded = difference.toFixed(1);
     points -= Math.abs(differenceRounded) * 10;
-    pointsArray.push(points)
+    pointsArray.push({
+      points,
+      party
+    })
   })
   return pointsArray
 });
 
-const resultSum = computed(() => yourResult.value?.reduce((accumulator, currentValue) => accumulator + currentValue, 0))
+const resultSum = computed(() => yourResult.value?.reduce((accumulator, currentValue) => accumulator + currentValue.points, 0))
 </script>
 
 <template>
@@ -78,7 +81,7 @@ const resultSum = computed(() => yourResult.value?.reduce((accumulator, currentV
         official[element]
       }}%</p>
       <h3 class="mt-5">Twoje punkty:</h3>
-      <span v-for="(element, index) in yourResult" :key="index">{{ element }}, </span>
+      <p v-for="(element, index) in yourResult" :key="index">{{ element.party }} - {{ element.points }} </p>
       <h3 class="mt-5">Suma</h3>
       <p>{{ resultSum }}</p>
     </div>
